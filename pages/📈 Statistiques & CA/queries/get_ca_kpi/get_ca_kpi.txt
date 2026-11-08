@@ -4,12 +4,14 @@ WITH params AS (
             WHEN EXTRACT(MONTH FROM CURRENT_DATE) >= 11 
             THEN MAKE_DATE(EXTRACT(YEAR FROM CURRENT_DATE)::int, 11, 1)
             ELSE MAKE_DATE((EXTRACT(YEAR FROM CURRENT_DATE)::int - 1), 11, 1)
-        END AS debut_exercice_n,
-        CASE 
-            WHEN EXTRACT(MONTH FROM CURRENT_DATE) >= 11 
-            THEN MAKE_DATE((EXTRACT(YEAR FROM CURRENT_DATE)::int - 1), 11, 1)
-            ELSE MAKE_DATE((EXTRACT(YEAR FROM CURRENT_DATE)::int - 2), 11, 1)
-        END AS debut_exercice_n1
+        END AS debut_n
+),
+dates AS (
+    SELECT 
+        debut_n,
+        (debut_n - INTERVAL '1 year')::date AS debut_n1,
+        (CURRENT_DATE - INTERVAL '1 year')::date AS meme_date_n1
+    FROM params
 )
 SELECT 
     -- CA du Jour
@@ -24,16 +26,28 @@ SELECT
     
     -- CA Exercice en cours (N)
     ROUND(COALESCE(SUM(bl."TOTAL_HT") FILTER (
-        WHERE bl."Date_Facture" >= p.debut_exercice_n 
-          AND bl."Date_Facture" < p.debut_exercice_n + INTERVAL '1 year'
-    ), 0), 2) AS ca_exercice_actuel,
+        WHERE bl."Date_Facture" >= d.debut_n 
+          AND bl."Date_Facture" <= CURRENT_DATE
+    ), 0), 2) AS ca_n,
 
-    -- CA Exercice précédent complet (N-1)
+    -- CA N-1 À DATE (Strictement la même période l'an dernier)
     ROUND(COALESCE(SUM(bl."TOTAL_HT") FILTER (
-        WHERE bl."Date_Facture" >= p.debut_exercice_n1 
-          AND bl."Date_Facture" < p.debut_exercice_n
-    ), 0), 2) AS ca_exercice_precedent
+        WHERE bl."Date_Facture" >= d.debut_n1 
+          AND bl."Date_Facture" <= d.meme_date_n1
+    ), 0), 2) AS ca_n1_a_date,
 
-FROM public."BONS_DE_LIVRAISON" bl, params p
+    -- Écart en € (Avance si positif, Retard si négatif)
+    ROUND(
+        COALESCE(SUM(bl."TOTAL_HT") FILTER (WHERE bl."Date_Facture" >= d.debut_n AND bl."Date_Facture" <= CURRENT_DATE), 0) -
+        COALESCE(SUM(bl."TOTAL_HT") FILTER (WHERE bl."Date_Facture" >= d.debut_n1 AND bl."Date_Facture" <= d.meme_date_n1), 0)
+    , 2) AS ecart_montant,
+
+    -- CA Total de l'an dernier (pour garder la cible globale de l'exercice)
+    ROUND(COALESCE(SUM(bl."TOTAL_HT") FILTER (
+        WHERE bl."Date_Facture" >= d.debut_n1 
+          AND bl."Date_Facture" < d.debut_n
+    ), 0), 2) AS ca_n1_total
+
+FROM public."BONS_DE_LIVRAISON" bl, dates d
 WHERE UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
   AND COALESCE(bl."Origine", '') <> 'Garantie';

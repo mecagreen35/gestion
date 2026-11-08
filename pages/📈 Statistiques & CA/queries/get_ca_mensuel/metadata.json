@@ -25,7 +25,7 @@
     "dynamicBindingPathList": [],
     "name": "get_ca_mensuel",
     "pageId": "📈 Statistiques & CA",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }

@@ -41,7 +41,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 60,
   "shouldTruncate": false,
-  "text": "{{get_ca_kpi.data[0].ca_exercice_precedent}} €",
+  "text": "{{get_ca_kpi.data[0].ca_n1_a_date}} €",
   "textAlign": "LEFT",
   "textColor": "#03B365",
   "topRow": 5,

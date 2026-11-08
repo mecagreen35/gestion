@@ -1,0 +1,65 @@
+WITH params AS (
+    SELECT 
+        CASE 
+            WHEN EXTRACT(MONTH FROM CURRENT_DATE) >= 11 
+            THEN MAKE_DATE(EXTRACT(YEAR FROM CURRENT_DATE)::int, 11, 1)
+            ELSE MAKE_DATE((EXTRACT(YEAR FROM CURRENT_DATE)::int - 1), 11, 1)
+        END AS debut_n
+),
+dates AS (
+    SELECT 
+        debut_n,
+        (debut_n - INTERVAL '1 year')::date AS debut_n1,
+        (debut_n + INTERVAL '1 year')::date AS fin_n
+    FROM params
+),
+stats_ventes AS (
+    SELECT 
+        ((EXTRACT(MONTH FROM bl."Date_Facture")::int - 11 + 12) % 12) AS offset_mois,
+        SUM(CASE 
+            WHEN bl."Date_Facture" >= d.debut_n AND bl."Date_Facture" < d.fin_n 
+            THEN bl."TOTAL_HT" ELSE 0 
+        END) AS ca_n,
+        SUM(CASE 
+            WHEN bl."Date_Facture" >= d.debut_n1 AND bl."Date_Facture" < d.debut_n 
+            THEN bl."TOTAL_HT" ELSE 0 
+        END) AS ca_n1
+    FROM public."BONS_DE_LIVRAISON" bl
+    JOIN dates d 
+      ON bl."Date_Facture" >= d.debut_n1 AND bl."Date_Facture" < d.fin_n
+    WHERE UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
+      AND COALESCE(bl."Origine", '') <> 'Garantie'
+    GROUP BY ((EXTRACT(MONTH FROM bl."Date_Facture")::int - 11 + 12) % 12)
+),
+grille AS (
+    SELECT 
+        num AS offset_mois,
+        CASE num
+            WHEN 0 THEN 'Novembre'
+            WHEN 1 THEN 'Décembre'
+            WHEN 2 THEN 'Janvier'
+            WHEN 3 THEN 'Février'
+            WHEN 4 THEN 'Mars'
+            WHEN 5 THEN 'Avril'
+            WHEN 6 THEN 'Mai'
+            WHEN 7 THEN 'Juin'
+            WHEN 8 THEN 'Juillet'
+            WHEN 9 THEN 'Août'
+            WHEN 10 THEN 'Septembre'
+            WHEN 11 THEN 'Octobre'
+        END AS nom_mois
+    FROM generate_series(0, 11) AS num
+)
+SELECT 
+    g.nom_mois AS "Mois",
+    ROUND(COALESCE(sv.ca_n, 0)::numeric, 2) AS "CA N",
+    ROUND(COALESCE(sv.ca_n1, 0)::numeric, 2) AS "CA N-1",
+    ROUND((COALESCE(sv.ca_n, 0) - COALESCE(sv.ca_n1, 0))::numeric, 2) AS "Écart (€)",
+    CASE 
+        WHEN COALESCE(sv.ca_n1, 0) > 0 
+        THEN ROUND(((COALESCE(sv.ca_n, 0) - sv.ca_n1) / sv.ca_n1 * 100)::numeric, 1)
+        ELSE NULL 
+    END AS "Évolution (%)"
+FROM grille g
+LEFT JOIN stats_ventes sv ON sv.offset_mois = g.offset_mois
+ORDER BY g.offset_mois ASC;
