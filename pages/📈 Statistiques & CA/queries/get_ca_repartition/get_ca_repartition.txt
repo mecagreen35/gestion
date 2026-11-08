@@ -1,0 +1,28 @@
+WITH params AS (
+    SELECT CASE 
+        WHEN EXTRACT(MONTH FROM CURRENT_DATE) >= 11 
+        THEN MAKE_DATE(EXTRACT(YEAR FROM CURRENT_DATE)::int, 11, 1)
+        ELSE MAKE_DATE((EXTRACT(YEAR FROM CURRENT_DATE)::int - 1), 11, 1)
+    END AS debut_exercice
+)
+SELECT 
+    CASE 
+        WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) IN ('INTERVENTION', 'LOCATION_MAINTENANCE') THEN 'Atelier / Réparations'
+        WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'LOCATION' THEN 'Location Flotte'
+        WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'COMMANDE CLIENT' THEN 'Ventes Machines (Commandes)'
+        ELSE 'Comptoir / Magasin'
+    END AS x,
+    ROUND(SUM(bl."TOTAL_HT"), 2) AS y
+FROM public."BONS_DE_LIVRAISON" bl, params p
+WHERE UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
+  AND bl."Date_Facture" >= p.debut_exercice
+  AND bl."Date_Facture" < p.debut_exercice + INTERVAL '1 year'
+  AND COALESCE(bl."Origine", '') <> 'Garantie'
+GROUP BY 
+    CASE 
+        WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) IN ('INTERVENTION', 'LOCATION_MAINTENANCE') THEN 'Atelier / Réparations'
+        WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'LOCATION' THEN 'Location Flotte'
+        WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'COMMANDE CLIENT' THEN 'Ventes Machines (Commandes)'
+        ELSE 'Comptoir / Magasin'
+    END
+ORDER BY y DESC;
