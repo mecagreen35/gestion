@@ -5,20 +5,65 @@ WITH params AS (
         ELSE MAKE_DATE((EXTRACT(YEAR FROM CURRENT_DATE)::int - 1), 11, 1)
     END AS debut_exercice
 ),
-lignes_calculees AS (
+-- 1. Les factures Location et Garantie prises à 100 % sur l'en-tête (aucun centime perdu)
+docs_directs AS (
     SELECT 
         CASE 
-            -- 1. 🛡️ GARANTIE CONSTRUCTEUR
             WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'GARANTIE' THEN 'Garantie Constructeur'
+            ELSE 'Location Flotte'
+        END AS pole,
+        bl."TOTAL_HT"::numeric AS montant
+    FROM public."BONS_DE_LIVRAISON" bl
+    CROSS JOIN params p
+    WHERE (
+            UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
+            OR UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'GARANTIE'
+          )
+      AND UPPER(TRIM(COALESCE(bl."Origine", ''))) IN ('LOCATION', 'GARANTIE')
+      AND bl."Date_Facture" >= p.debut_exercice
+      AND bl."Date_Facture" < p.debut_exercice + INTERVAL '1 year'
+),
+-- 2. Toutes les autres factures ventilées ligne par ligne par famille d'article
+lignes_autres AS (
+    SELECT 
+        CASE 
+            -- Cas particulier Machines (extrait même si facturé dans un dossier Atelier)
+            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%OCCASION%'
+              OR UPPER(lbl."Descriptif") LIKE '%OCCASION%' 
+              OR UPPER(lbl."Descriptif") LIKE '%OCCASSION%' THEN 'Matériel d''Occasion'
+            
+            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%ROBOT%'
+              OR (a."Famille" IS NULL AND (
+                   UPPER(lbl."Descriptif") LIKE '%ROBOT%' 
+                OR UPPER(lbl."Descriptif") LIKE '%SEGWAY%' 
+                OR UPPER(lbl."Descriptif") LIKE '%AMBROGIO%'
+                OR UPPER(lbl."Descriptif") LIKE '%TECHLINE%'
+              )) THEN 'Matériel Robot'
+              
+            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%BATTERIE%' 
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%EGO%'
+              OR (a."Famille" IS NULL AND (
+                   UPPER(lbl."Descriptif") LIKE '%BATTERIE%' 
+                OR UPPER(lbl."Descriptif") LIKE '%EGO %'
+              )) THEN 'Matériel à Batterie'
+              
+            WHEN UPPER(COALESCE(a."Famille", '')) IN ('TONDEUSE', 'AUTOPORTEE', 'TRACTEUR', 'DEBROUSSAILLEUSE', 'TRONCONNEUSE', 'MOTOCULTEUR', 'MATERIEL', 'MACHINE')
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%TOND%'
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%AUTOPORT%'
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%DEBROUS%'
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%TRONC%'
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%MOTOCULT%'
+              OR (a."Famille" IS NULL AND (
+                   UPPER(lbl."Descriptif") LIKE '%TONDEUSE%' 
+                OR UPPER(lbl."Descriptif") LIKE '%AUTOPORT%' 
+                OR UPPER(lbl."Descriptif") LIKE '%TRACTEUR%' 
+                OR UPPER(lbl."Descriptif") LIKE '%DEBROUSSAILLEUSE%' 
+                OR UPPER(lbl."Descriptif") LIKE '%TRONCONNEUSE%' 
+                OR UPPER(lbl."Descriptif") LIKE '%MOTOCULTEUR%'
+              )) THEN 'Matériel Neuf (Thermique)'
 
-            -- 2. 🚜 LOCATION
-            WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'LOCATION'
-              OR UPPER(lbl."Descriptif") LIKE '%LOCATION %'
-              OR UPPER(lbl."Descriptif") LIKE '%1/2J%'
-              OR UPPER(lbl."Descriptif") LIKE '%1J%' THEN 'Location Flotte'
-
-            -- 3. 🛠️ ATELIER & SERVICES
-            WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) IN ('INTERVENTION', 'ATELIER') 
+            -- Si la facture vient d'une intervention, tout le reste (MO + pièces d'intervention) va à l'atelier
+            WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'INTERVENTION' 
               OR UPPER(COALESCE(a."Famille", '')) IN ('MAIN D''OEUVRE', 'ATELIER', 'SERVICE', 'SERVICES', 'FORFAIT', 'FORFAITS')
               OR (a."Famille" IS NULL AND (
                    UPPER(lbl."Descriptif") LIKE '%MAIN%OEUVRE%' 
@@ -27,71 +72,45 @@ lignes_calculees AS (
                 OR UPPER(lbl."Descriptif") LIKE '%INSTALLATION%'
               )) THEN 'Atelier & Services'
 
-            -- 4. ⚡ MATÉRIEL & MACHINES
-            -- 4.1 Occasion
-            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%OCCASION%'
-              OR UPPER(lbl."Descriptif") LIKE '%OCCASION%' 
-              OR UPPER(lbl."Descriptif") LIKE '%OCCASSION%' THEN 'Matériel d''Occasion'
-            
-            -- 4.2 Robots Tondeuses
-            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%ROBOT%'
-              OR (a."Famille" IS NULL AND (
-                   UPPER(lbl."Descriptif") LIKE '%ROBOT %' 
-                OR UPPER(lbl."Descriptif") LIKE '%SEGWAY%' 
-                OR UPPER(lbl."Descriptif") LIKE '%AMBROGIO%'
-                OR UPPER(lbl."Descriptif") LIKE '%TECHLINE%'
-              )) THEN 'Matériel Robot'
-              
-            -- 4.3 Matériel à Batterie
-            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%BATTERIE%' 
-              OR UPPER(COALESCE(a."Famille", '')) LIKE '%EGO%'
-              OR (a."Famille" IS NULL AND (
-                   UPPER(lbl."Descriptif") LIKE '%BATTERIE %' 
-                OR UPPER(lbl."Descriptif") LIKE '%EGO %'
-              )) THEN 'Matériel à Batterie'
-              
-            -- 4.4 Matériel Neuf (Thermique & Porté)
-            WHEN UPPER(COALESCE(a."Famille", '')) IN ('TONDEUSE', 'AUTOPORTEE', 'TRACTEUR', 'DEBROUSSAILLEUSE', 'TRONCONNEUSE', 'MOTOCULTEUR', 'MATERIEL', 'MACHINE')
-              OR UPPER(COALESCE(a."Famille", '')) LIKE '%TOND%'
-              OR UPPER(COALESCE(a."Famille", '')) LIKE '%AUTOPORT%'
-              OR UPPER(COALESCE(a."Famille", '')) LIKE '%DEBROUS%'
-              OR UPPER(COALESCE(a."Famille", '')) LIKE '%TRONC%'
-              OR UPPER(COALESCE(a."Famille", '')) LIKE '%MOTOCULT%'
-              OR (a."Famille" IS NULL AND (
-                   UPPER(lbl."Descriptif") LIKE '%TONDEUSE %' 
-                OR UPPER(lbl."Descriptif") LIKE '%AUTOPORT%' 
-                OR UPPER(lbl."Descriptif") LIKE '%TRACTEUR %' 
-                OR UPPER(lbl."Descriptif") LIKE '%DEBROUSSAILLEUSE%' 
-                OR UPPER(lbl."Descriptif") LIKE '%TRONCONNEUSE%' 
-                OR UPPER(lbl."Descriptif") LIKE '%MOTOCULTEUR%'
-              )) THEN 'Matériel Neuf (Thermique)'
+            -- Location ponctuelle passée sur une facture comptoir
+            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%LOCATION%'
+              OR UPPER(lbl."Descriptif") LIKE '%LOCATION%'
+              OR UPPER(lbl."Descriptif") LIKE '%1/2J%'
+              OR UPPER(lbl."Descriptif") LIKE '%1J%' THEN 'Location Flotte'
 
-            -- 5. 🔩 COMPTOIR
+            -- Le reste va au comptoir (pièces et consommables)
             ELSE 'Comptoir (Pièces & Consommables)'
         END AS pole,
-        
-        -- Montant net HT
-        ROUND((COALESCE(lbl."Quantite", 0)::numeric * COALESCE(lbl."Prix_HT", 0)::numeric) - 
-              CASE 
-                WHEN lbl."Type_Remise" = '%' THEN (COALESCE(lbl."Quantite", 0)::numeric * COALESCE(lbl."Prix_HT", 0)::numeric) * (COALESCE(lbl."Valeur_Remise", 0)::numeric / 100.0) 
-                WHEN lbl."Type_Remise" = '€' THEN COALESCE(lbl."Valeur_Remise", 0)::numeric 
-                ELSE 0 
-              END, 2) AS total_ligne_ht
-    FROM public."Ligne_BL" lbl
-    JOIN public."BONS_DE_LIVRAISON" bl ON bl."ID_BL" = lbl."ID_BL"
+
+        -- Gestion des factures sans lignes détaillées
+        CASE 
+            WHEN lbl."ID_BL" IS NULL THEN COALESCE(bl."TOTAL_HT", 0)::numeric
+            ELSE ROUND((COALESCE(lbl."Quantite", 0)::numeric * COALESCE(lbl."Prix_HT", 0)::numeric) - 
+                  CASE 
+                    WHEN lbl."Type_Remise" = '%' THEN (COALESCE(lbl."Quantite", 0)::numeric * COALESCE(lbl."Prix_HT", 0)::numeric) * (COALESCE(lbl."Valeur_Remise", 0)::numeric / 100.0) 
+                    WHEN lbl."Type_Remise" = '€' THEN COALESCE(lbl."Valeur_Remise", 0)::numeric 
+                    ELSE 0 
+                  END, 2)
+        END AS montant
+
+    FROM public."BONS_DE_LIVRAISON" bl
+    LEFT JOIN public."Ligne_BL" lbl ON bl."ID_BL" = lbl."ID_BL"
     LEFT JOIN public."ARTICLES" a ON a."ID_Article" = lbl."ID_Article"
     CROSS JOIN params p
-    WHERE (
-            UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
-            OR UPPER(TRIM(COALESCE(bl."Origine", ''))) = 'GARANTIE'
-          )
-      AND UPPER(TRIM(COALESCE(bl."Origine", ''))) NOT IN ('LOCATION_MAINTENANCE', 'INTERNE', 'MAINTENANCE')
+    WHERE UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
+      -- Exclut Location et Garantie qui sont déjà comptabilisées en bloc au-dessus
+      AND UPPER(TRIM(COALESCE(bl."Origine", ''))) NOT IN ('LOCATION', 'GARANTIE', 'LOCATION_MAINTENANCE', 'INTERNE', 'MAINTENANCE')
       AND bl."Date_Facture" >= p.debut_exercice
       AND bl."Date_Facture" < p.debut_exercice + INTERVAL '1 year'
+),
+tous_flux AS (
+    SELECT pole, montant FROM docs_directs
+    UNION ALL
+    SELECT pole, montant FROM lignes_autres
 )
 SELECT 
     pole AS x,
-    SUM(total_ligne_ht) AS y
-FROM lignes_calculees
+    ROUND(SUM(montant), 2) AS y
+FROM tous_flux
 GROUP BY pole
 ORDER BY y DESC;
