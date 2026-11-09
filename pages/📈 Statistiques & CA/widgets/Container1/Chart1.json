@@ -3,21 +3,21 @@
   "allowScroll": false,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 47,
+  "bottomRow": 60,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "chartData": {
     "g4530vjtxp": {
       "color": "#1d4ed8",
-      "data": "{{get_ca_comparatif_12m.data.map(r => ({ x: r[\"Mois\"], y: r[\"CA N\"] }))}}",
-      "seriesName": "Exercice N"
+      "data": "{{ get_ca_comparatif_12m.data.map(r => ({ x: r.Mois, y: r.CA_Precedent })) }}",
+      "seriesName": "12 mois précédents"
     },
     "q0rkrsxqrc": {
       "color": "#22c55e",
-      "data": "{{get_ca_comparatif_12m.data.map(r => ({ x: r[\"Mois\"], y: r[\"CA N-1\"] }))}}",
-      "seriesName": "Exercice N-1"
+      "data": "{{ get_ca_comparatif_12m.data.map(r => ({ x: r.Mois, y: r.CA_Recent })) }}",
+      "seriesName": "12 derniers mois"
     }
   },
-  "chartName": "Évolution mensuelle du CA",
+  "chartName": "{{ \"Évolution 12 mois glissants (Mois en cours : \" + moment().locale('fr').format('MMMM YYYY') + \")\" }}",
   "chartType": "COLUMN_CHART",
   "customEChartConfig": "{{\n{\n  \"dataset\": {\n    \"source\": [\n      [\n        \"Day\",\n        \"Baidu\",\n        \"Google\",\n        \"Bing\"\n      ],\n      [\n        \"Mon\",\n        620,\n        120,\n        60\n      ],\n      [\n        \"Tue\",\n        732,\n        132,\n        72\n      ],\n      [\n        \"Wed\",\n        701,\n        101,\n        71\n      ],\n      [\n        \"Thu\",\n        734,\n        134,\n        74\n      ],\n      [\n        \"Fri\",\n        1090,\n        290,\n        190\n      ],\n      [\n        \"Sat\",\n        1130,\n        230,\n        130\n      ],\n      [\n        \"Sun\",\n        1120,\n        220,\n        110\n      ]\n    ]\n  },\n  \"tooltip\": {\n    \"trigger\": \"axis\",\n    \"axisPointer\": {\n      \"type\": \"shadow\"\n    }\n  },\n  \"title\": {\n    \"text\": \"Search Engine Usage\",\n    \"left\": \"center\",\n    \"textStyle\": {\n      \"width\": 200,\n      \"overflow\": \"truncate\"\n    }\n  },\n  \"legend\": {\n    \"top\": 40,\n    \"type\": \"scroll\"\n  },\n  \"grid\": {\n    \"left\": 15,\n    \"right\": 15,\n    \"bottom\": 30,\n    \"top\": 100,\n    \"containLabel\": true\n  },\n  \"xAxis\": [\n    {\n      \"type\": \"category\"\n    }\n  ],\n  \"yAxis\": [\n    {\n      \"type\": \"value\"\n    }\n  ],\n  \"series\": [\n    {\n      \"type\": \"bar\",\n      \"stack\": \"Search Engine\"\n    },\n    {\n      \"type\": \"bar\",\n      \"stack\": \"Search Engine\"\n    },\n    {\n      \"type\": \"bar\",\n      \"stack\": \"Search Engine\"\n    }\n  ]\n}\n}}",
   "customFusionChartConfig": {
@@ -88,8 +88,12 @@
     },
     {
       "key": "chartData.q0rkrsxqrc.data"
+    },
+    {
+      "key": "chartName"
     }
   ],
+  "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [],
   "flexVerticalAlignment": "start",
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
@@ -104,8 +108,8 @@
   "mobileRightColumn": 24,
   "mobileTopRow": 15,
   "needsErrorInfo": true,
-  "originalBottomRow": 50,
-  "originalTopRow": 18,
+  "originalBottomRow": 60,
+  "originalTopRow": 21,
   "parentColumnSpace": 12.0625,
   "parentId": "cy5m7donct",
   "parentRowSpace": 10,
@@ -113,7 +117,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 42,
   "showDataPointLabel": false,
-  "topRow": 15,
+  "topRow": 21,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "o1g960oj1q",

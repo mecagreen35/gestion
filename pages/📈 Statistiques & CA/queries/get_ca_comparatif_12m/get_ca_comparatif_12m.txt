@@ -1,66 +1,58 @@
 WITH params AS (
-    SELECT 
-        CASE 
-            WHEN EXTRACT(MONTH FROM CURRENT_DATE) >= 11 
-            THEN MAKE_DATE(EXTRACT(YEAR FROM CURRENT_DATE)::int, 11, 1)
-            ELSE MAKE_DATE((EXTRACT(YEAR FROM CURRENT_DATE)::int - 1), 11, 1)
-        END AS debut_n
+    SELECT DATE_TRUNC('month', CURRENT_DATE)::date AS debut_mois_courant
 ),
-dates AS (
+mois_glissants AS (
     SELECT 
-        debut_n,
-        (debut_n - INTERVAL '1 year')::date AS debut_n1,
-        (debut_n + INTERVAL '1 year')::date AS fin_n
-    FROM params
+        i,
+        (p.debut_mois_courant - (i * INTERVAL '1 month'))::date AS date_debut_n,
+        (p.debut_mois_courant - ((i - 1) * INTERVAL '1 month'))::date AS date_fin_n,
+        ((p.debut_mois_courant - (i * INTERVAL '1 month')) - INTERVAL '1 year')::date AS date_debut_n1,
+        ((p.debut_mois_courant - ((i - 1) * INTERVAL '1 month')) - INTERVAL '1 year')::date AS date_fin_n1
+    FROM params p, generate_series(11, 0, -1) AS i
 ),
-stats_ventes AS (
+factures AS (
     SELECT 
-        ((EXTRACT(MONTH FROM bl."Date_Facture")::int - 11 + 12) % 12) AS offset_mois,
-        SUM(CASE 
-            WHEN bl."Date_Facture" >= d.debut_n AND bl."Date_Facture" < d.fin_n 
-            THEN bl."TOTAL_HT" ELSE 0 
-        END) AS ca_n,
-        SUM(CASE 
-            WHEN bl."Date_Facture" >= d.debut_n1 AND bl."Date_Facture" < d.debut_n 
-            THEN bl."TOTAL_HT" ELSE 0 
-        END) AS ca_n1
+        bl."TOTAL_HT",
+        bl."Date_Facture"
     FROM public."BONS_DE_LIVRAISON" bl
-    JOIN dates d 
-      ON bl."Date_Facture" >= d.debut_n1 AND bl."Date_Facture" < d.fin_n
-    WHERE UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
-      -- 🛑 Exclusion stricte des garanties et de l'interne
+    WHERE bl."Date_Facture" IS NOT NULL
+      AND UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
       AND UPPER(TRIM(COALESCE(bl."Origine", ''))) NOT IN ('GARANTIE', 'LOCATION_MAINTENANCE', 'INTERNE', 'MAINTENANCE')
-    GROUP BY ((EXTRACT(MONTH FROM bl."Date_Facture")::int - 11 + 12) % 12)
-),
-grille AS (
-    SELECT 
-        num AS offset_mois,
-        CASE num
-            WHEN 0 THEN 'Novembre'
-            WHEN 1 THEN 'Décembre'
-            WHEN 2 THEN 'Janvier'
-            WHEN 3 THEN 'Février'
-            WHEN 4 THEN 'Mars'
-            WHEN 5 THEN 'Avril'
-            WHEN 6 THEN 'Mai'
-            WHEN 7 THEN 'Juin'
-            WHEN 8 THEN 'Juillet'
-            WHEN 9 THEN 'Août'
-            WHEN 10 THEN 'Septembre'
-            WHEN 11 THEN 'Octobre'
-        END AS nom_mois
-    FROM generate_series(0, 11) AS num
 )
 SELECT 
-    g.nom_mois AS "Mois",
-    ROUND(COALESCE(sv.ca_n, 0)::numeric, 2) AS "CA N",
-    ROUND(COALESCE(sv.ca_n1, 0)::numeric, 2) AS "CA N-1",
-    ROUND((COALESCE(sv.ca_n, 0) - COALESCE(sv.ca_n1, 0))::numeric, 2) AS "Écart (€)",
+    -- Libellé avec marqueur direct sur le mois actuel
     CASE 
-        WHEN COALESCE(sv.ca_n1, 0) > 0 
-        THEN ROUND(((COALESCE(sv.ca_n, 0) - sv.ca_n1) / sv.ca_n1 * 100)::numeric, 1)
-        ELSE NULL 
-    END AS "Évolution (%)"
-FROM grille g
-LEFT JOIN stats_ventes sv ON sv.offset_mois = g.offset_mois
-ORDER BY g.offset_mois ASC;
+        WHEN m.i = 0 THEN 
+            CASE EXTRACT(MONTH FROM m.date_debut_n)
+                WHEN 1 THEN 'Jan' WHEN 2 THEN 'Fév' WHEN 3 THEN 'Mar'
+                WHEN 4 THEN 'Avr' WHEN 5 THEN 'Mai' WHEN 6 THEN 'Juin'
+                WHEN 7 THEN 'Juil' WHEN 8 THEN 'Août' WHEN 9 THEN 'Sept'
+                WHEN 10 THEN 'Oct' WHEN 11 THEN 'Nov' WHEN 12 THEN 'Déc'
+            END || ' ' || SUBSTRING(EXTRACT(YEAR FROM m.date_debut_n)::text FROM 3 FOR 2) || ' (En cours)'
+        ELSE 
+            CASE EXTRACT(MONTH FROM m.date_debut_n)
+                WHEN 1 THEN 'Jan' WHEN 2 THEN 'Fév' WHEN 3 THEN 'Mar'
+                WHEN 4 THEN 'Avr' WHEN 5 THEN 'Mai' WHEN 6 THEN 'Juin'
+                WHEN 7 THEN 'Juil' WHEN 8 THEN 'Août' WHEN 9 THEN 'Sept'
+                WHEN 10 THEN 'Oct' WHEN 11 THEN 'Nov' WHEN 12 THEN 'Déc'
+            END || ' ' || SUBSTRING(EXTRACT(YEAR FROM m.date_debut_n)::text FROM 3 FOR 2)
+    END AS "Mois",
+    m.i AS ordre,
+    -- 12 derniers mois réels
+    ROUND(COALESCE(SUM(f."TOTAL_HT") FILTER (
+        WHERE f."Date_Facture" >= m.date_debut_n 
+          AND f."Date_Facture" < m.date_fin_n
+    ), 0)::numeric, 2) AS "CA_Recent",
+    -- Même mois l'année précédente (N-1)
+    ROUND(COALESCE(SUM(f."TOTAL_HT") FILTER (
+        WHERE f."Date_Facture" >= m.date_debut_n1 
+          AND f."Date_Facture" < m.date_fin_n1
+    ), 0)::numeric, 2) AS "CA_Precedent"
+FROM mois_glissants m
+LEFT JOIN factures f ON (
+    (f."Date_Facture" >= m.date_debut_n AND f."Date_Facture" < m.date_fin_n)
+    OR 
+    (f."Date_Facture" >= m.date_debut_n1 AND f."Date_Facture" < m.date_fin_n1)
+)
+GROUP BY m.i, m.date_debut_n, m.date_fin_n, m.date_debut_n1, m.date_fin_n1
+ORDER BY m.i DESC;

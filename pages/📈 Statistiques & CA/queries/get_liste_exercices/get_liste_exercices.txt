@@ -1,0 +1,16 @@
+SELECT DISTINCT
+    CASE 
+        WHEN EXTRACT(MONTH FROM bl."Date_Facture") >= 11 
+        THEN EXTRACT(YEAR FROM bl."Date_Facture")::text || '-' || (EXTRACT(YEAR FROM bl."Date_Facture") + 1)::text
+        ELSE (EXTRACT(YEAR FROM bl."Date_Facture") - 1)::text || '-' || EXTRACT(YEAR FROM bl."Date_Facture")::text
+    END AS label,
+    CASE 
+        WHEN EXTRACT(MONTH FROM bl."Date_Facture") >= 11 
+        THEN EXTRACT(YEAR FROM bl."Date_Facture")::text || '-' || (EXTRACT(YEAR FROM bl."Date_Facture") + 1)::text
+        ELSE (EXTRACT(YEAR FROM bl."Date_Facture") - 1)::text || '-' || EXTRACT(YEAR FROM bl."Date_Facture")::text
+    END AS value
+FROM public."BONS_DE_LIVRAISON" bl
+WHERE bl."Date_Facture" IS NOT NULL
+  AND UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
+  AND UPPER(TRIM(COALESCE(bl."Origine", ''))) NOT IN ('GARANTIE', 'LOCATION_MAINTENANCE', 'INTERNE', 'MAINTENANCE')
+ORDER BY value DESC;
