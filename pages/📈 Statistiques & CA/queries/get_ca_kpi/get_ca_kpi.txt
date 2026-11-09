@@ -30,24 +30,19 @@ SELECT
           AND bl."Date_Facture" <= CURRENT_DATE
     ), 0), 2) AS ca_n,
 
-    -- CA N-1 À DATE (Strictement la même période l'an dernier)
+    -- CA N-1 À DATE (Même date l'année passée)
     ROUND(COALESCE(SUM(bl."TOTAL_HT") FILTER (
         WHERE bl."Date_Facture" >= d.debut_n1 
           AND bl."Date_Facture" <= d.meme_date_n1
     ), 0), 2) AS ca_n1_a_date,
 
-    -- Écart en € (Avance si positif, Retard si négatif)
+    -- Écart (€)
     ROUND(
         COALESCE(SUM(bl."TOTAL_HT") FILTER (WHERE bl."Date_Facture" >= d.debut_n AND bl."Date_Facture" <= CURRENT_DATE), 0) -
         COALESCE(SUM(bl."TOTAL_HT") FILTER (WHERE bl."Date_Facture" >= d.debut_n1 AND bl."Date_Facture" <= d.meme_date_n1), 0)
-    , 2) AS ecart_montant,
-
-    -- CA Total de l'an dernier (pour garder la cible globale de l'exercice)
-    ROUND(COALESCE(SUM(bl."TOTAL_HT") FILTER (
-        WHERE bl."Date_Facture" >= d.debut_n1 
-          AND bl."Date_Facture" < d.debut_n
-    ), 0), 2) AS ca_n1_total
+    , 2) AS ecart_montant
 
 FROM public."BONS_DE_LIVRAISON" bl, dates d
 WHERE UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
-  AND COALESCE(bl."Origine", '') <> 'Garantie';
+  -- 🛑 Exclusion stricte des garanties et de tout l'interne
+  AND UPPER(TRIM(COALESCE(bl."Origine", ''))) NOT IN ('GARANTIE', 'LOCATION_MAINTENANCE', 'INTERNE', 'MAINTENANCE');

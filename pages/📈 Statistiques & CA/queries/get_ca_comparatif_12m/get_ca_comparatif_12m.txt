@@ -28,7 +28,8 @@ stats_ventes AS (
     JOIN dates d 
       ON bl."Date_Facture" >= d.debut_n1 AND bl."Date_Facture" < d.fin_n
     WHERE UPPER(TRIM(COALESCE(bl."Statut_Facturation", ''))) IN ('FACTURÉ', 'FACTURE', 'PAYÉ', 'PAYE')
-      AND COALESCE(bl."Origine", '') <> 'Garantie'
+      -- 🛑 Exclusion stricte des garanties et de l'interne
+      AND UPPER(TRIM(COALESCE(bl."Origine", ''))) NOT IN ('GARANTIE', 'LOCATION_MAINTENANCE', 'INTERNE', 'MAINTENANCE')
     GROUP BY ((EXTRACT(MONTH FROM bl."Date_Facture")::int - 11 + 12) % 12)
 ),
 grille AS (
