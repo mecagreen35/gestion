@@ -31,6 +31,10 @@
     {
       "id": "📈 Statistiques & CA",
       "isDefault": true
+    },
+    {
+      "id": "Campagnes Marketing",
+      "isDefault": false
     }
   ],
   "unpublishedApplicationDetail": {

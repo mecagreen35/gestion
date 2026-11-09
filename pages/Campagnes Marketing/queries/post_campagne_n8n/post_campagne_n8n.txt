@@ -1,0 +1,4 @@
+{
+  "cibles": {{ Table_Cibles.selectedRows }},
+  "message": {{ Input_Message.text }}
+}

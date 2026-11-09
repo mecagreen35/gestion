@@ -1,0 +1,64 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 13,
+  "boxShadow": "none",
+  "defaultOptionValue": "TOUS",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": false,
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "1kqpm921ja",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Filtrer par type",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 13,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 20,
+  "mobileTopRow": 6,
+  "needsErrorInfo": false,
+  "onOptionChange": "{{get_cibles_campagne.run()}}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 12.0625,
+  "parentId": "0m7myfr8wp",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 20,
+  "serverSideFiltering": false,
+  "sourceData": "[\n  {\"label\": \"Toutes les machines\", \"value\": \"TOUS\"},\n  {\"label\": \"Autoportées / Tracteurs\", \"value\": \"AUTOPORTEE\"},\n  {\"label\": \"Tondeuses\", \"value\": \"TONDEUSE\"},\n  {\"label\": \"Tronçonneuses\", \"value\": \"TRONCONNEUSE\"}\n]",
+  "topRow": 6,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "uf58rzcuuz",
+  "widgetName": "Select_Type"
+}
