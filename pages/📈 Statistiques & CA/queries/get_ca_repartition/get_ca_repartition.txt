@@ -5,7 +5,7 @@ WITH params AS (
         ELSE MAKE_DATE((EXTRACT(YEAR FROM CURRENT_DATE)::int - 1), 11, 1)
     END AS debut_exercice
 ),
--- 1. Location et Garantie prises sur l'en-tête (457,91 € de location préservés)
+-- 1. Factures complètes Location et Garantie (prise directe sur le montant BL)
 docs_directs AS (
     SELECT 
         CASE 
@@ -23,39 +23,51 @@ docs_directs AS (
       AND bl."Date_Facture" >= p.debut_exercice
       AND bl."Date_Facture" < p.debut_exercice + INTERVAL '1 year'
 ),
--- 2. Ventilation de toutes les autres factures
+-- 2. Ventilation des autres factures (Lignes BL) priorisée sur la FAMILLE
 lignes_autres AS (
     SELECT 
         CASE 
-            -- 2.1 Matériel d'Occasion
+            -- 2.1 Acomptes clients (Option 1 : tranche dédiée)
+            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%ACOMPTE%'
+              OR UPPER(lbl."Ref_Fournisseur") LIKE '%ACOMPTE%'
+              OR UPPER(lbl."Descriptif") LIKE '%ACOMPTE%' THEN 'Acomptes sur Commandes'
+
+            -- 2.2 Familles de Services & Prestations -> Atelier
+            WHEN UPPER(COALESCE(a."Famille", '')) IN ('SERVICE', 'SERVICES', 'MAIN D''OEUVRE', 'ATELIER', 'FORFAIT', 'FORFAITS')
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%SERVICE%'
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%MAIN D%OEUVRE%'
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%MAIN D%ŒUVRE%'
+              OR UPPER(COALESCE(a."Famille", '')) LIKE '%FORFAIT%' THEN 'Atelier & Services'
+
+            -- 2.3 Matériel d'Occasion
             WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%OCCASION%'
-              OR UPPER(lbl."Descriptif") LIKE '%OCCASION%' 
-              OR UPPER(lbl."Descriptif") LIKE '%OCCASSION%' THEN 'Matériel d''Occasion'
-            
-            -- 2.2 Robots Tondeuses
+              OR ((a."Famille" IS NULL OR UPPER(a."Famille") = 'ARCHIVE') AND UPPER(lbl."Descriptif") LIKE '%OCCASION%') THEN 'Matériel d''Occasion'
+
+            -- 2.4 Robots Tondeuses
             WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%ROBOT%'
               OR UPPER(COALESCE(a."Type_Machine", '')) LIKE '%ROBOT%'
-              OR UPPER(lbl."Descriptif") LIKE '%ROBOT%' 
-              OR UPPER(lbl."Descriptif") LIKE '%SEGWAY%' 
-              OR UPPER(lbl."Descriptif") LIKE '%AMBROGIO%'
-              OR UPPER(lbl."Descriptif") LIKE '%TECHLINE%' THEN 'Matériel Robot'
-              
-            -- 2.3 Matériel à Batterie
+              OR ((a."Famille" IS NULL OR UPPER(a."Famille") = 'ARCHIVE') AND (
+                   UPPER(lbl."Descriptif") LIKE '%ROBOT%' 
+                OR UPPER(lbl."Descriptif") LIKE '%SEGWAY%' 
+                OR UPPER(lbl."Descriptif") LIKE '%AMBROGIO%'
+                OR UPPER(lbl."Descriptif") LIKE '%TECHLINE%'
+              )) THEN 'Matériel Robot'
+
+            -- 2.5 Matériel à Batterie
             WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%BATTERIE%' 
               OR UPPER(COALESCE(a."Famille", '')) LIKE '%EGO%'
-              OR UPPER(lbl."Descriptif") LIKE '%BATTERIE%' 
-              OR UPPER(lbl."Descriptif") LIKE '%EGO %' THEN 'Matériel à Batterie'
-              
-            -- 2.4 Matériel Neuf (Thermique & Porté)
+              OR ((a."Famille" IS NULL OR UPPER(a."Famille") = 'ARCHIVE') AND (
+                   UPPER(lbl."Descriptif") LIKE '%BATTERIE%' 
+                OR UPPER(lbl."Descriptif") LIKE '%EGO %'
+              )) THEN 'Matériel à Batterie'
+
+            -- 2.6 Matériel Neuf (Thermique & Porté)
             WHEN UPPER(COALESCE(a."Famille", '')) IN ('MATÉRIEL NEUF', 'MATERIEL NEUF', 'MACHINE', 'MACHINES')
               OR UPPER(COALESCE(a."Famille", '')) LIKE '%NEUF%'
               OR UPPER(COALESCE(a."Famille", '')) LIKE '%MATÉRIEL%'
               OR UPPER(COALESCE(a."Famille", '')) LIKE '%MATERIEL%'
               OR UPPER(COALESCE(a."Type_Machine", '')) IN ('TRONÇONNEUSE', 'TRONCONNEUSE', 'TONDEUSE', 'AUTOPORTÉE', 'AUTOPORTEE', 'DÉBROUSSAILLEUSE', 'DEBROUSSAILLEUSE', 'TRACTEUR', 'MOTOCULTEUR')
-              -- Repli sur le descriptif pour les anciennes archives ou lignes libres
-              OR (
-                  (a."Famille" IS NULL OR UPPER(a."Famille") = 'ARCHIVE')
-                  AND (
+              OR ((a."Famille" IS NULL OR UPPER(a."Famille") = 'ARCHIVE') AND (
                       UPPER(lbl."Descriptif") LIKE '%TRONCONNEUSE%' 
                    OR UPPER(lbl."Descriptif") LIKE '%TRONÇONNEUSE%' 
                    OR UPPER(lbl."Descriptif") LIKE '%TONDEUSE%' 
@@ -70,28 +82,17 @@ lignes_autres AS (
                   AND UPPER(lbl."Descriptif") NOT LIKE '%GUIDE%'
                   AND UPPER(lbl."Descriptif") NOT LIKE '%LAME%'
                   AND UPPER(lbl."Descriptif") NOT LIKE '%COURROIE%'
-                  AND UPPER(lbl."Descriptif") NOT LIKE '%AFFUTAGE%'
               ) THEN 'Matériel Neuf (Thermique)'
 
-            -- 2.5 Atelier & Services (MO, forfaits ou dossiers intervention)
-            WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) IN ('INTERVENTION', 'ATELIER') 
-              OR UPPER(COALESCE(a."Famille", '')) IN ('MAIN D''OEUVRE', 'ATELIER', 'SERVICE', 'SERVICES', 'FORFAIT', 'FORFAITS')
-              OR UPPER(lbl."Descriptif") LIKE '%MAIN%OEUVRE%' 
-              OR UPPER(lbl."Descriptif") LIKE '%MAIN%ŒUVRE%' 
-              OR UPPER(lbl."Descriptif") LIKE '%FORFAIT%'
-              OR UPPER(lbl."Descriptif") LIKE '%INSTALLATION%' THEN 'Atelier & Services'
+            -- 2.7 Pièces détachées & consommables montés en atelier
+            WHEN UPPER(TRIM(COALESCE(bl."Origine", ''))) IN ('INTERVENTION', 'ATELIER')
+              OR bl."ID_Intervention" IS NOT NULL THEN 'Atelier & Services'
 
-            -- 2.6 Location ponctuelle vendue au comptoir
-            WHEN UPPER(COALESCE(a."Famille", '')) LIKE '%LOCATION%'
-              OR UPPER(lbl."Descriptif") LIKE '%LOCATION%'
-              OR UPPER(lbl."Descriptif") LIKE '%1/2J%'
-              OR UPPER(lbl."Descriptif") LIKE '%1J%' THEN 'Location Flotte'
-
-            -- 2.7 Comptoir (Consommables type Aspen, pièces de rechange)
+            -- 2.8 Ventes directes magasin (Pièces détachées, huiles, Aspen vendus au comptoir)
             ELSE 'Comptoir (Pièces & Consommables)'
         END AS pole,
 
-        -- Gestion des lignes sans détail
+        -- Calcul du montant HT net
         CASE 
             WHEN lbl."ID_BL" IS NULL THEN COALESCE(bl."TOTAL_HT", 0)::numeric
             ELSE ROUND((COALESCE(lbl."Quantite", 0)::numeric * COALESCE(lbl."Prix_HT", 0)::numeric) - 
