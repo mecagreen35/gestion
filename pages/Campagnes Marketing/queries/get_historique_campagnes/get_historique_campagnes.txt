@@ -1,0 +1,3 @@
+SELECT * 
+FROM public.historique_campagnes 
+ORDER BY "Date_Envoi" DESC;
