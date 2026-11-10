@@ -1,6 +1,6 @@
 {
   "gitSyncId": "6af10185b2bc3648e5cf19bd_dcc1a2a6-b0f9-4508-8e84-d93a6bc91722",
-  "id": "Campagnes Marketing_get_cibles_campagne",
+  "id": "📢 Campagnes Marketing_get_cibles_campagne",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
@@ -28,7 +28,7 @@
       }
     ],
     "name": "get_cibles_campagne",
-    "pageId": "Campagnes Marketing",
+    "pageId": "📢 Campagnes Marketing",
     "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }

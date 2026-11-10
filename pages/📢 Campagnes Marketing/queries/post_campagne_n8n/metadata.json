@@ -1,6 +1,6 @@
 {
   "gitSyncId": "6af10185b2bc3648e5cf19bd_6adabf44-51a7-481d-b245-e84f73932c6c",
-  "id": "Campagnes Marketing_post_campagne_n8n",
+  "id": "📢 Campagnes Marketing_post_campagne_n8n",
   "pluginId": "restapi-plugin",
   "pluginType": "API",
   "unpublishedAction": {
@@ -43,7 +43,7 @@
       }
     ],
     "name": "post_campagne_n8n",
-    "pageId": "Campagnes Marketing",
+    "pageId": "📢 Campagnes Marketing",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }

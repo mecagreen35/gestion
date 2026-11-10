@@ -1,6 +1,6 @@
 {
   "gitSyncId": "6af10185b2bc3648e5cf19bd_b03e98a9-209a-4b82-b892-e1feb9699123",
-  "id": "Campagnes Marketing_get_historique_campagnes",
+  "id": "📢 Campagnes Marketing_get_historique_campagnes",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
@@ -24,7 +24,7 @@
     },
     "dynamicBindingPathList": [],
     "name": "get_historique_campagnes",
-    "pageId": "Campagnes Marketing",
+    "pageId": "📢 Campagnes Marketing",
     "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }

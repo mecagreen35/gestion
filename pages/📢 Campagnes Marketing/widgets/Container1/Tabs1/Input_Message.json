@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 87,
+  "bottomRow": 194,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultText": "",
   "dynamicBindingPathList": [
@@ -23,7 +23,7 @@
   "isVisible": true,
   "key": "il0k5a7noq",
   "labelAlignment": "left",
-  "labelPosition": "Top",
+  "labelPosition": "Auto",
   "labelText": "Label",
   "labelWidth": 5,
   "leftColumn": 0,
@@ -43,7 +43,7 @@
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
   "rightColumn": 64,
-  "topRow": 62,
+  "topRow": 64,
   "type": "RICH_TEXT_EDITOR_WIDGET",
   "version": 1,
   "widgetId": "7vdz8g20sc",
