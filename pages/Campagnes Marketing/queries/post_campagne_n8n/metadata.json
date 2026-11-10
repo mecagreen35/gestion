@@ -11,7 +11,7 @@
           "value": "application/json"
         }
       ],
-      "body": "{\n  \"cibles\": {{ Table_Cibles.selectedRows }},\n  \"message\": {{ Input_Message.text }}\n}",
+      "body": "{\n  \"cibles\": {{ Table_Cibles.selectedRows }},\n  \"nom_campagne\": {{ Inp_Nom_Campagne.text }},\n  \"message\": {{ Input_Message.text }}\n}",
       "bodyFormData": [],
       "encodeParamsToggle": true,
       "formData": {

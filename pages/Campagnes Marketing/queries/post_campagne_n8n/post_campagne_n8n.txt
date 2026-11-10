@@ -1,4 +1,5 @@
 {
   "cibles": {{ Table_Cibles.selectedRows }},
+  "nom_campagne": {{ Inp_Nom_Campagne.text }},
   "message": {{ Input_Message.text }}
 }
