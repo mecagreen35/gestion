@@ -1,7 +1,7 @@
 SELECT DISTINCT ON (c."ID_Client")
     c."ID_Client",
-    c."Nom" AS "Nom",
-    c."Prénom" AS "Prenom", 
+    COALESCE(c."Nom", c."Societe", 'Client') AS "Nom",
+    COALESCE(c."Prénom", '') AS "Prenom", 
     c."Email" AS "Email",
     c."Telephone" AS "Telephone",
     m."Marque",
@@ -34,4 +34,4 @@ WHERE
     )
     -- On ne garde que les clients qui ont un moyen de contact
     AND (c."Email" IS NOT NULL OR c."Telephone" IS NOT NULL)
-ORDER BY c."ID_Client", m."N_Serie";
+ORDER BY c."ID_Client";

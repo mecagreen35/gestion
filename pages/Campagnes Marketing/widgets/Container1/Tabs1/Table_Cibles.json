@@ -46,7 +46,8 @@
   ],
   "columnUpdatedAt": 1794259306385,
   "columnWidthMap": {
-    "Modele": 262
+    "Modele": 262,
+    "Nom": 240
   },
   "customIsLoading": false,
   "customIsLoadingValue": "",
