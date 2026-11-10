@@ -1,4 +1,4 @@
-SELECT DISTINCT ON (c."ID_Client", m."N_Serie")
+SELECT DISTINCT ON (c."ID_Client")
     c."ID_Client",
     c."Nom" AS "Nom",
     c."Prénom" AS "Prenom", 
