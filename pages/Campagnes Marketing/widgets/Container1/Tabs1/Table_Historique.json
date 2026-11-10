@@ -42,7 +42,9 @@
     "Statut"
   ],
   "columnUpdatedAt": 1794312431975,
-  "columnWidthMap": {},
+  "columnWidthMap": {
+    "Nom_Client": 217
+  },
   "customIsLoading": false,
   "customIsLoadingValue": "",
   "defaultPageSize": 0,
