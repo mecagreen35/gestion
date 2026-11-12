@@ -1,7 +1,7 @@
 SELECT DISTINCT ON (c."ID_Client")
     c."ID_Client",
     COALESCE(c."Nom", c."Societe", 'Client') AS "Nom",
-    COALESCE(c."Prénom", '') AS "Prenom", 
+    COALESCE(c."Prénom", '') AS "Prenom",
     c."Email" AS "Email",
     c."Telephone" AS "Telephone",
     m."Marque",
@@ -11,26 +11,28 @@ SELECT DISTINCT ON (c."ID_Client")
     m."Date_Entree_Stock" AS "Date_Achat_Machine"
 FROM public."Parc_Materiel" m
 JOIN public."Clients" c ON c."ID_Client" = m."ID_Client"
-WHERE 
+WHERE
+    -- Exclure les matériels archivés ou inactifs
+    UPPER(TRIM(COALESCE(m."Statut_Ligne", 'Actif'))) NOT IN ('ARCHIVÉ', 'ARCHIVE', 'INACTIF')
     -- Filtre Type de machine (Menu déroulant Select_Type)
-    (
-      {{ Select_Type.selectedOptionValue === 'TOUS' || !Select_Type.selectedOptionValue }} 
-      OR UPPER(m."Type_Machine") LIKE '%' || UPPER({{ Select_Type.selectedOptionValue }}) || '%'
+    AND (
+        {{ Select_Type.selectedOptionValue === 'TOUS' || !Select_Type.selectedOptionValue }}
+        OR UPPER(m."Type_Machine") LIKE '%' || UPPER({{ Select_Type.selectedOptionValue }}) || '%'
     )
     -- Filtre Spécifique Robot (Menu déroulant Select_Robot)
     AND (
-      {{ Select_Robot.selectedOptionValue === 'NON' }} 
-      OR (
-        {{ Select_Robot.selectedOptionValue === 'OUI' }} 
-        AND (
-            UPPER(m."Type_Machine") LIKE '%ROBOT%'
-            OR UPPER(m."Modele") LIKE '%ROBOT%'
-            OR UPPER(m."Modele") LIKE '%SEGWAY%'
-            OR UPPER(m."Modele") LIKE '%NAVIMOW%'
-            OR UPPER(m."Modele") LIKE '%AMBROGIO%'
-            OR UPPER(m."Modele") LIKE '%TECHLINE%'
+        {{ Select_Robot.selectedOptionValue === 'NON' }}
+        OR (
+            {{ Select_Robot.selectedOptionValue === 'OUI' }}
+            AND (
+                UPPER(m."Type_Machine") LIKE '%ROBOT%'
+                OR UPPER(m."Modele") LIKE '%ROBOT%'
+                OR UPPER(m."Modele") LIKE '%SEGWAY%'
+                OR UPPER(m."Modele") LIKE '%NAVIMOW%'
+                OR UPPER(m."Modele") LIKE '%AMBROGIO%'
+                OR UPPER(m."Modele") LIKE '%TECHLINE%'
+            )
         )
-      )
     )
     -- On ne garde que les clients qui ont un moyen de contact
     AND (c."Email" IS NOT NULL OR c."Telephone" IS NOT NULL)
