@@ -1,0 +1,62 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 21,
+  "boxShadow": "none",
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => (  appsmith.store.mode_edit_pointage === 'EDIT' ? (Table_Journal.triggeredRow.type_absence || '') : '' ))(Sel_Edit_PeriodeAbs.options, Sel_Edit_PeriodeAbs.serverSideFiltering) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "defaultOptionValue"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isDisabled": false,
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "byuu5ojnep",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Type d'absence (laisser vide si journée travaillée)",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 21,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 21,
+  "mobileTopRow": 14,
+  "needsErrorInfo": false,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 11.375,
+  "parentId": "1lcuv7ef8q",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 32,
+  "serverSideFiltering": false,
+  "sourceData": "[\n  { \"label\": \"Aucune (Journée travaillée)\", \"value\": \"\" },\n  { \"label\": \"🏖️ Congé payé\", \"value\": \"CONGE\" },\n  { \"label\": \"⚖️ Récupération\", \"value\": \"RECUP\" },\n  { \"label\": \"💊 Maladie\", \"value\": \"MALADIE\" },\n  { \"label\": \"🎉 Jour férié\", \"value\": \"FERIE\" },\n  { \"label\": \"⛔ Absence injustifiée\", \"value\": \"ABSENCE_INJUSTIFIEE\" }\n]",
+  "topRow": 14,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "y9pwlyi2s2",
+  "widgetName": "Sel_Edit_Absence"
+}

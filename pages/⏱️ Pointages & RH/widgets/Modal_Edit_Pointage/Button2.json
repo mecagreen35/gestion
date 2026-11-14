@@ -1,0 +1,56 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 70,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonStyle": "PRIMARY_BUTTON",
+  "buttonVariant": "PRIMARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "825o85mmf7",
+  "leftColumn": 48,
+  "minWidth": 120,
+  "mobileBottomRow": 22,
+  "mobileLeftColumn": 47,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 18,
+  "needsErrorInfo": false,
+  "onClick": "{{\n  (async () => {\n    if (!Sel_Edit_Employe.selectedOptionValue) {\n      showAlert('Veuillez sélectionner un salarié.', 'warning');\n      return;\n    }\n    try {\n      await Save_Journee_Pointage.run();\n      showAlert('✅ Journée enregistrée et compteurs recalculés !', 'success');\n      closeModal('Modal_Edit_Pointage');\n      await Get_Pointages_Journal.run();\n      await Get_Soldes_Pointage.run();\n      await Get_Export_Compta.run();\n    } catch (err) {\n      showAlert('Erreur : ' + (err.message || err), 'error');\n    }\n  })()\n}}",
+  "originalBottomRow": 22,
+  "originalTopRow": 18,
+  "parentId": "1lcuv7ef8q",
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "text": "Enregistrer",
+  "topRow": 66,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "df9v6zu38j",
+  "widgetName": "Button2"
+}

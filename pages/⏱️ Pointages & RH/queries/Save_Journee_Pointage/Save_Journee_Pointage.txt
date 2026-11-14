@@ -1,0 +1,15 @@
+SELECT public.fn_admin_sauvegarder_journee_pointage(
+    '{{ Sel_Edit_Employe.selectedOptionValue }}',
+    '{{ Date_Edit_Pointage.selectedDate.slice(0, 10) }}'::date,
+    {{ Inp_Edit_Matin.text ? "'" + Inp_Edit_Matin.text + "'::time" : "NULL" }},
+    {{ Inp_Edit_DebPause.text ? "'" + Inp_Edit_DebPause.text + "'::time" : "NULL" }},
+    {{ Inp_Edit_FinPause.text ? "'" + Inp_Edit_FinPause.text + "'::time" : "NULL" }},
+    {{ Inp_Edit_Soir.text ? "'" + Inp_Edit_Soir.text + "'::time" : "NULL" }},
+    {{ Sel_Justif_Matin.selectedOptionValue ? "'" + Sel_Justif_Matin.selectedOptionValue + "'" : "NULL" }},
+    {{ Sel_Justif_DebPause.selectedOptionValue ? "'" + Sel_Justif_DebPause.selectedOptionValue + "'" : "NULL" }},
+    {{ Sel_Justif_FinPause.selectedOptionValue ? "'" + Sel_Justif_FinPause.selectedOptionValue + "'" : "NULL" }},
+    {{ Sel_Justif_Soir.selectedOptionValue ? "'" + Sel_Justif_Soir.selectedOptionValue + "'" : "NULL" }},
+    {{ Sel_Edit_Absence.selectedOptionValue ? "'" + Sel_Edit_Absence.selectedOptionValue + "'" : "NULL" }},
+    '{{ Sel_Edit_PeriodeAbs.selectedOptionValue || "JOURNEE" }}',
+    {{ Inp_Edit_Comm.text ? "'" + Inp_Edit_Comm.text.replace(/'/g, "''") + "'" : "NULL" }}
+);

@@ -1,0 +1,11 @@
+SELECT *
+FROM public.v_pointages_calculs
+WHERE ({{ !Sel_Employe.selectedOptionValue }} OR "ID_Employe" = '{{ Sel_Employe.selectedOptionValue }}')
+  AND ({{ !Sel_Mois.selectedOptionValue }} OR mois_cle = '{{ Sel_Mois.selectedOptionValue }}')
+  AND (
+    {{ !Switch_Anomalies.isSwitchedOn }}
+    OR controle_pointage <> 'RAS'
+    OR retard_sec > 0
+    OR heures_injustifiees_sec > 0
+  )
+ORDER BY date_pointage DESC, nom_employe ASC;

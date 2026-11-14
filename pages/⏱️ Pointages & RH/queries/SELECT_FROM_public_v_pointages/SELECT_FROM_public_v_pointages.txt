@@ -1,0 +1,3 @@
+SELECT *
+FROM public.v_pointages_export_compta
+WHERE ({{ !Sel_Mois.selectedOptionValue }} OR mois_cle = '{{ Sel_Mois.selectedOptionValue }}');

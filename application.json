@@ -35,6 +35,10 @@
     {
       "id": "📢 Campagnes Marketing",
       "isDefault": false
+    },
+    {
+      "id": "⏱️ Pointages & RH",
+      "isDefault": false
     }
   ],
   "unpublishedApplicationDetail": {

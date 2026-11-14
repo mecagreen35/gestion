@@ -1,0 +1,3 @@
+SELECT DISTINCT mois_cle
+FROM public.v_pointages_calculs
+ORDER BY mois_cle DESC;

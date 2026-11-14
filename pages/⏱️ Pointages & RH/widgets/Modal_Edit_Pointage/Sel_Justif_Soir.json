@@ -1,0 +1,62 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 53,
+  "boxShadow": "none",
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => (  appsmith.store.mode_edit_pointage === 'EDIT' ? (Table_Journal.triggeredRow.justif_soir || '') : '' ))(Sel_Justif_MatinCopy.options, Sel_Justif_MatinCopy.serverSideFiltering) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "defaultOptionValue"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isDisabled": false,
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "byuu5ojnep",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Justif",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 33,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 30,
+  "mobileLeftColumn": 33,
+  "mobileRightColumn": 53,
+  "mobileTopRow": 23,
+  "needsErrorInfo": false,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 11.375,
+  "parentId": "1lcuv7ef8q",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "serverSideFiltering": false,
+  "sourceData": "[\n  { \"label\": \"Normal\", \"value\": \"\" },\n  { \"label\": \"🕒 Récupération\", \"value\": \"Récupération\" },\n  { \"label\": \"⛔ Injustifié\", \"value\": \"Injustifié\" }\n]",
+  "topRow": 46,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "r3lhtw37bo",
+  "widgetName": "Sel_Justif_Soir"
+}

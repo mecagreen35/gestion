@@ -1,0 +1,1 @@
+SELECT * FROM public.v_pointages_tableau_de_bord;
