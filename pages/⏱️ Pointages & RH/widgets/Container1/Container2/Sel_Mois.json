@@ -50,7 +50,7 @@
   "mobileRightColumn": 41,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ Get_Pointages_Journal.run(); Get_Export_Compta.run(); }}",
+  "onOptionChange": "{{ Get_Pointages_Journal.run(); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 11.5615234375,

@@ -1,6 +1,6 @@
 SELECT public.fn_admin_sauvegarder_journee_pointage(
     '{{ Sel_Edit_Employe.selectedOptionValue }}',
-    '{{ Date_Edit_Pointage.selectedDate.slice(0, 10) }}'::date,
+    '{{ Date_Edit_Pointage.formattedDate }}'::date,
     {{ Inp_Edit_Matin.text ? "'" + Inp_Edit_Matin.text + "'::time" : "NULL" }},
     {{ Inp_Edit_DebPause.text ? "'" + Inp_Edit_DebPause.text + "'::time" : "NULL" }},
     {{ Inp_Edit_FinPause.text ? "'" + Inp_Edit_FinPause.text + "'::time" : "NULL" }},

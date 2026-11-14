@@ -37,7 +37,7 @@
   "mobileRightColumn": 63,
   "mobileTopRow": 18,
   "needsErrorInfo": false,
-  "onClick": "{{\n  (async () => {\n    if (!Sel_Edit_Employe.selectedOptionValue) {\n      showAlert('Veuillez sélectionner un salarié.', 'warning');\n      return;\n    }\n    try {\n      await Save_Journee_Pointage.run();\n      showAlert('✅ Journée enregistrée et compteurs recalculés !', 'success');\n      closeModal('Modal_Edit_Pointage');\n      await Get_Pointages_Journal.run();\n      await Get_Soldes_Pointage.run();\n      await Get_Export_Compta.run();\n    } catch (err) {\n      showAlert('Erreur : ' + (err.message || err), 'error');\n    }\n  })()\n}}",
+  "onClick": "{{\n  (async () => {\n    if (!Sel_Edit_Employe.selectedOptionValue) {\n      showAlert('Veuillez sélectionner un salarié.', 'warning');\n      return;\n    }\n    try {\n      await Save_Journee_Pointage.run();\n      showAlert('✅ Journée enregistrée et compteurs recalculés !', 'success');\n      closeModal('Modal_Edit_Pointage');\n      await Get_Pointages_Journal.run();\n      await Get_Soldes_Pointage.run();\n    } catch (err) {\n      showAlert('Erreur : ' + (err.message || err), 'error');\n    }\n  })()\n}}",
   "originalBottomRow": 22,
   "originalTopRow": 18,
   "parentId": "1lcuv7ef8q",
