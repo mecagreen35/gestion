@@ -36,7 +36,7 @@
   "mobileTopRow": 3,
   "needsErrorInfo": false,
   "onChange": "{{ Get_Pointages_Journal.run(); }}",
-  "originalBottomRow": 7,
+  "originalBottomRow": 8,
   "originalTopRow": 3,
   "parentColumnSpace": 16.9140625,
   "parentId": "hbikcgmom4",
