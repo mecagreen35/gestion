@@ -1,0 +1,1 @@
+SELECT public.fn_declencher_export_paie('{{ moment().date() >= 25 ? moment().format("YYYY-MM") : moment().subtract(1, "months").format("YYYY-MM") }}');
