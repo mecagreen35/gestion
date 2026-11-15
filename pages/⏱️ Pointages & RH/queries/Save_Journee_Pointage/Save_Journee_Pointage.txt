@@ -1,15 +1,15 @@
 SELECT public.fn_admin_sauvegarder_journee_pointage(
-    '{{ Sel_Edit_Employe.selectedOptionValue }}',
-    '{{ Date_Edit_Pointage.formattedDate }}'::date,
-    {{ Inp_Edit_Matin.text ? "'" + Inp_Edit_Matin.text + "'::time" : "NULL" }},
-    {{ Inp_Edit_DebPause.text ? "'" + Inp_Edit_DebPause.text + "'::time" : "NULL" }},
-    {{ Inp_Edit_FinPause.text ? "'" + Inp_Edit_FinPause.text + "'::time" : "NULL" }},
-    {{ Inp_Edit_Soir.text ? "'" + Inp_Edit_Soir.text + "'::time" : "NULL" }},
-    {{ Sel_Justif_Matin.selectedOptionValue ? "'" + Sel_Justif_Matin.selectedOptionValue + "'" : "NULL" }},
-    {{ Sel_Justif_DebPause.selectedOptionValue ? "'" + Sel_Justif_DebPause.selectedOptionValue + "'" : "NULL" }},
-    {{ Sel_Justif_FinPause.selectedOptionValue ? "'" + Sel_Justif_FinPause.selectedOptionValue + "'" : "NULL" }},
-    {{ Sel_Justif_Soir.selectedOptionValue ? "'" + Sel_Justif_Soir.selectedOptionValue + "'" : "NULL" }},
-    {{ Sel_Edit_Absence.selectedOptionValue ? "'" + Sel_Edit_Absence.selectedOptionValue + "'" : "NULL" }},
-    '{{ Sel_Edit_PeriodeAbs.selectedOptionValue || "JOURNEE" }}',
-    {{ Inp_Edit_Comm.text ? "'" + Inp_Edit_Comm.text.replace(/'/g, "''") + "'" : "NULL" }}
+    NULLIF({{ Sel_Edit_Employe.selectedOptionValue || '' }}::text, ''),
+    NULLIF({{ Date_Edit_Pointage.formattedDate || '' }}::text, '')::date,
+    NULLIF({{ (Inp_Edit_Matin.text || '').trim() }}::text, '')::time,
+    NULLIF({{ (Inp_Edit_DebPause.text || '').trim() }}::text, '')::time,
+    NULLIF({{ (Inp_Edit_FinPause.text || '').trim() }}::text, '')::time,
+    NULLIF({{ (Inp_Edit_Soir.text || '').trim() }}::text, '')::time,
+    NULLIF({{ Sel_Justif_Matin.selectedOptionValue || '' }}::text, ''),
+    NULLIF({{ Sel_Justif_DebPause.selectedOptionValue || '' }}::text, ''),
+    NULLIF({{ Sel_Justif_FinPause.selectedOptionValue || '' }}::text, ''),
+    NULLIF({{ Sel_Justif_Soir.selectedOptionValue || '' }}::text, ''),
+    NULLIF({{ Sel_Edit_Absence.selectedOptionValue || '' }}::text, ''),
+    COALESCE(NULLIF({{ Sel_Edit_PeriodeAbs.selectedOptionValue || '' }}::text, ''), 'JOURNEE'),
+    NULLIF({{ (Inp_Edit_Comm.text || '').trim() }}::text, '')
 );

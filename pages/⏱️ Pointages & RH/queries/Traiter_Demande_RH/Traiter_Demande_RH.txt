@@ -1,0 +1,5 @@
+SELECT public.fn_traiter_demande_pointage(
+    NULLIF({{ appsmith.store.id_demande_rh || '' }}::text, '')::uuid,
+    NULLIF({{ appsmith.store.decision_rh || '' }}::text, ''),
+    NULLIF({{ (Inp_Reponse_RH.text || '').trim() }}::text, '')
+);

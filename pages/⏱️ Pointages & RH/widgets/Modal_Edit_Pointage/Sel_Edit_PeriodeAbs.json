@@ -4,7 +4,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 21,
   "boxShadow": "none",
-  "defaultOptionValue": "{{ ((options, serverSideFiltering) => (  appsmith.store.mode_edit_pointage === 'EDIT' ? (Table_Journal.triggeredRow.periode_absence || 'JOURNEE') : 'JOURNEE' ))(Sel_Edit_PeriodeAbs.options, Sel_Edit_PeriodeAbs.serverSideFiltering) }}",
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( \n  !Sel_Edit_Absence.selectedOptionValue\n    ? ''\n    : (appsmith.store.mode_edit_pointage === 'EDIT' && Table_Journal.triggeredRow.periode_absence\n        ? Table_Journal.triggeredRow.periode_absence\n        : 'JOURNEE')\n))(Sel_Edit_PeriodeAbs.options, Sel_Edit_PeriodeAbs.serverSideFiltering) }}",
   "dynamicBindingPathList": [
     {
       "key": "accentColor"
@@ -14,16 +14,22 @@
     },
     {
       "key": "defaultOptionValue"
+    },
+    {
+      "key": "isDisabled"
     }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
     }
   ],
   "dynamicTriggerPathList": [],
-  "isDisabled": false,
+  "isDisabled": "{{ !Sel_Edit_Absence.selectedOptionValue }}",
   "isFilterable": true,
   "isLoading": false,
   "isRequired": false,
@@ -48,7 +54,7 @@
   "parentColumnSpace": 11.375,
   "parentId": "1lcuv7ef8q",
   "parentRowSpace": 10,
-  "placeholderText": "Select option",
+  "placeholderText": "—",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
   "rightColumn": 63,

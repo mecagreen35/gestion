@@ -5,7 +5,7 @@
   "borderColor": "#E0DEDE",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 76,
+  "bottomRow": 137,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "cachedTableData": {},
   "canFreezeColumn": true,
@@ -33,6 +33,7 @@
     }
   },
   "columnOrder": [
+    "customColumn1",
     "date_pointage",
     "ID_Employe",
     "jour_nom",
@@ -71,10 +72,9 @@
     "periode_absence",
     "justification",
     "commentaire",
-    "controle_pointage",
-    "customColumn1"
+    "controle_pointage"
   ],
-  "columnUpdatedAt": 1794644385324,
+  "columnUpdatedAt": 1794646637748,
   "columnWidthMap": {},
   "customIsLoading": false,
   "customIsLoadingValue": "",
@@ -224,9 +224,6 @@
       "key": "primaryColumns.heures_injustifiees_hms.textColor"
     },
     {
-      "key": "primaryColumns.customColumn1.buttonColor"
-    },
-    {
       "key": "primaryColumns.customColumn1.borderRadius"
     },
     {
@@ -279,8 +276,8 @@
   "mobileRightColumn": 34,
   "mobileTopRow": 39,
   "needsErrorInfo": false,
-  "originalBottomRow": 76,
-  "originalTopRow": 39,
+  "originalBottomRow": 137,
+  "originalTopRow": 77,
   "parentColumnSpace": 17.5,
   "parentId": "gaa8291d7t",
   "parentRowSpace": 10,
@@ -421,9 +418,10 @@
       "allowSameOptionsInNewRow": true,
       "borderRadius": "{{Table_Journal.processedTableData.map((currentRow, currentIndex) => ( (appsmith.theme.borderRadius.appBorderRadius)))}}",
       "boxShadow": "{{Table_Journal.processedTableData.map((currentRow, currentIndex) => ( \"none\"))}}",
-      "buttonColor": "{{Table_Journal.processedTableData.map((currentRow, currentIndex) => ( (appsmith.theme.colors.primaryColor)))}}",
+      "buttonColor": "#b91c1c",
       "buttonLabel": "✏️ Corriger",
       "buttonStyle": "rgb(3, 179, 101)",
+      "buttonVariant": "SECONDARY",
       "columnType": "button",
       "computedValue": "",
       "currencyCode": "USD",
@@ -1586,7 +1584,7 @@
   "searchKey": "",
   "tableData": "{{ Get_Pointages_Journal.data }}",
   "textSize": "0.875rem",
-  "topRow": 39,
+  "topRow": 77,
   "totalRecordsCount": 0,
   "type": "TABLE_WIDGET_V2",
   "version": 2,

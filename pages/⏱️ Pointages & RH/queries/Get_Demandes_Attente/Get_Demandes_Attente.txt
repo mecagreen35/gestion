@@ -1,0 +1,19 @@
+SELECT
+    d."ID_Demande"::text AS "ID_Demande",
+    d."ID_Employe",
+    e."Prenom" AS "Salarie",
+    d.type_demande,
+    d.date_concernee,
+    d.type_absence,
+    d.periode_absence,
+    d.heure_matin,
+    d.heure_deb_pause,
+    d.heure_fin_pause,
+    d.heure_soir,
+    d.justification_demandee,
+    d.commentaire_salarie,
+    d.date_creation
+FROM public.pointage_demandes d
+JOIN public."Employes" e ON e."ID_Employe" = d."ID_Employe"
+WHERE d.statut = 'EN_ATTENTE'
+ORDER BY d.date_creation ASC;

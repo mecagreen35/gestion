@@ -4,7 +4,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 21,
   "boxShadow": "none",
-  "defaultOptionValue": "{{ ((options, serverSideFiltering) => (  appsmith.store.mode_edit_pointage === 'EDIT' ? (Table_Journal.triggeredRow.type_absence || '') : '' ))(Sel_Edit_PeriodeAbs.options, Sel_Edit_PeriodeAbs.serverSideFiltering) }}",
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => (  appsmith.store.mode_edit_pointage === 'EDIT' ? (Table_Journal.triggeredRow.type_absence || '') : '' ))(Sel_Edit_Absence.options, Sel_Edit_Absence.serverSideFiltering) }}",
   "dynamicBindingPathList": [
     {
       "key": "accentColor"
@@ -20,9 +20,16 @@
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"
+    },
+    {
+      "key": "onOptionChange"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
@@ -43,6 +50,7 @@
   "mobileRightColumn": 21,
   "mobileTopRow": 14,
   "needsErrorInfo": false,
+  "onOptionChange": "{{ !Sel_Edit_Absence.selectedOptionValue ? resetWidget('Sel_Edit_PeriodeAbs', false) : null }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 11.375,
