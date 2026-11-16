@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT public.fn_declencher_export_paie('{{ moment().date() >= 25 ? moment().format(\"YYYY-MM\") : moment().subtract(1, \"months\").format(\"YYYY-MM\") }}');",
+      "body": "SELECT public.fn_declencher_export_paie(\n  {{ moment().date() >= 25 ? moment().format('YYYY-MM') : moment().subtract(1, 'months').format('YYYY-MM') }}::text,\n  {{ \n    JSON.stringify(Table_Export_Compta.tableData.map((row, index) => {\n      const updatedRow = Table_Export_Compta.updatedRows.find(r => r.index === index);\n      return updatedRow ? Object.assign({}, row, updatedRow.updatedFields) : row;\n    })) \n  }}::jsonb\n);",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

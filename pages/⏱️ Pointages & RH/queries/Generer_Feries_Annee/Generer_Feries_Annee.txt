@@ -1,0 +1,1 @@
+SELECT public.fn_generer_jours_feries({{ Inp_Annee_Feries.text || moment().year() }});

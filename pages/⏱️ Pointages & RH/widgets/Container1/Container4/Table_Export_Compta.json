@@ -128,7 +128,7 @@
       "allowHeaderWrapping": false,
       "allowSameOptionsInNewRow": true,
       "columnType": "text",
-      "computedValue": "{{(() => { const tableData = Table1.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"ID_Employe\"])) : ID_Employe })()}}",
+      "computedValue": "{{(() => { const tableData = Table_Export_Compta.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"ID_Employe\"])) : ID_Employe })()}}",
       "currencyCode": "USD",
       "decimals": 0,
       "enableFilter": true,
@@ -160,7 +160,7 @@
       "allowHeaderWrapping": false,
       "allowSameOptionsInNewRow": true,
       "columnType": "text",
-      "computedValue": "{{(() => { const tableData = Table1.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Mois\"])) : Mois })()}}",
+      "computedValue": "{{(() => { const tableData = Table_Export_Compta.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Mois\"])) : Mois })()}}",
       "currencyCode": "USD",
       "decimals": 0,
       "enableFilter": true,
@@ -320,7 +320,7 @@
       "allowHeaderWrapping": false,
       "allowSameOptionsInNewRow": true,
       "columnType": "text",
-      "computedValue": "{{(() => { const tableData = Table1.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Salarié\"])) : Salarié })()}}",
+      "computedValue": "{{(() => { const tableData = Table_Export_Compta.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Salarié\"])) : Salarié })()}}",
       "currencyCode": "USD",
       "decimals": 0,
       "enableFilter": true,
@@ -359,5 +359,5 @@
   "version": 2,
   "verticalAlignment": "CENTER",
   "widgetId": "j6ib7943ot",
-  "widgetName": "Table1"
+  "widgetName": "Table_Export_Compta"
 }

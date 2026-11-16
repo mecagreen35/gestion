@@ -1,1 +1,9 @@
-SELECT public.fn_declencher_export_paie('{{ moment().date() >= 25 ? moment().format("YYYY-MM") : moment().subtract(1, "months").format("YYYY-MM") }}');
+SELECT public.fn_declencher_export_paie(
+  {{ moment().date() >= 25 ? moment().format('YYYY-MM') : moment().subtract(1, 'months').format('YYYY-MM') }}::text,
+  {{ 
+    JSON.stringify(Table_Export_Compta.tableData.map((row, index) => {
+      const updatedRow = Table_Export_Compta.updatedRows.find(r => r.index === index);
+      return updatedRow ? Object.assign({}, row, updatedRow.updatedFields) : row;
+    })) 
+  }}::jsonb
+);
