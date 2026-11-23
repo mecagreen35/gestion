@@ -1,0 +1,124 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowScroll": false,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 79,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "chartData": {
+    "t95fj5qxgr": {
+      "data": [
+        {
+          "x": "Product1",
+          "y": 20000
+        },
+        {
+          "x": "Product2",
+          "y": 22000
+        },
+        {
+          "x": "Product3",
+          "y": 32000
+        }
+      ],
+      "seriesName": "2023"
+    }
+  },
+  "chartName": "Sales Report",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => ( \n  (() => {\n    const rows = Get_Rentabilite_Equipe.data || [];\n    const seriesDef = [\n      { name: \"Facturé Client\", key: \"Equipe_Heures_Client\", color: \"#16a34a\" },\n      { name: \"Location\", key: \"Equipe_Heures_Location\", color: \"#2563eb\" },\n      { name: \"Occasion\", key: \"Equipe_Heures_Occasion\", color: \"#0891b2\" },\n      { name: \"Prépa / Neuf\", key: \"Equipe_Heures_Prepa_Interne\", color: \"#7c3aed\" },\n      { name: \"Garantie Constructeur\", key: \"Equipe_Heures_Garantie\", color: \"#eab308\" },\n      { name: \"Perte Directe\", key: \"Equipe_Heures_Perte\", color: \"#dc2626\" },\n      { name: \"Non Facturé\", key: \"Equipe_Heures_Non_Facturees\", color: \"#9ca3af\" }\n    ];\n    return {\n      tooltip: { trigger: \"axis\", axisPointer: { type: \"shadow\" } },\n      legend: { top: 0 },\n      grid: { left: \"3%\", right: \"3%\", bottom: \"5%\", containLabel: true },\n      xAxis: { type: \"category\", data: rows.map(r => r.Mois) },\n      yAxis: { type: \"value\", name: \"Heures\" },\n      series: seriesDef.map(s => ({\n        name: s.name,\n        type: \"bar\",\n        stack: \"total\",\n        itemStyle: { color: s.color },\n        data: rows.map(r => Number(r[s.key] || 0))\n      }))\n    };\n  })()\n))(Chart1.chartType) }}",
+  "customFusionChartConfig": {
+    "dataSource": {
+      "chart": {
+        "alignCaptionWithCanvas": 1,
+        "canvasPadding": "0",
+        "caption": "Sales Report",
+        "captionAlignment": "center",
+        "captionFontColor": "#231F20",
+        "captionFontSize": "24",
+        "captionPadding": "20",
+        "chartBottomMargin": "10",
+        "chartLeftMargin": "20",
+        "chartRightMargin": "40",
+        "chartTopMargin": "10",
+        "labelFontColor": "#716e6e",
+        "labelFontSize": "12",
+        "legendIconAlpha": "100",
+        "legendIconBgAlpha": "100",
+        "legendIconSides": "4",
+        "legendPosition": "top",
+        "theme": "fusion",
+        "xAxisName": "Product Line",
+        "xAxisNameFontColor": "#716e6e",
+        "xAxisNameFontSize": "14",
+        "yAxisName": "Revenue($)",
+        "yAxisNameFontColor": "#716e6e",
+        "yAxisNameFontSize": "14",
+        "yAxisValueFontColor": "#716e6e",
+        "yAxisValueFontSize": "12"
+      },
+      "data": [
+        {
+          "label": "Product1",
+          "value": 20000
+        },
+        {
+          "label": "Product2",
+          "value": 22000
+        },
+        {
+          "label": "Product3",
+          "value": 32000
+        }
+      ]
+    },
+    "type": "column2d"
+  },
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "customEChartConfig"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "flexVerticalAlignment": "start",
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "97rxz3zish",
+  "labelOrientation": "auto",
+  "leftColumn": 0,
+  "minWidth": 450,
+  "mobileBottomRow": 73,
+  "mobileLeftColumn": 17,
+  "mobileRightColumn": 41,
+  "mobileTopRow": 41,
+  "needsErrorInfo": true,
+  "originalBottomRow": 79,
+  "originalTopRow": 41,
+  "parentColumnSpace": 11.75,
+  "parentId": "kih8mhikro",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "showDataPointLabel": false,
+  "topRow": 41,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "mxom0tay5v",
+  "widgetName": "Chart1",
+  "xAxisName": "Product Line",
+  "yAxisName": "Revenue($)"
+}
