@@ -1,0 +1,4 @@
+SELECT *
+FROM public.v_rentabilite_mecaniciens_synthese
+WHERE "Periode" = '{{ Sel_Mois.selectedOptionValue || moment().format("YYYY-MM") }}'
+ORDER BY "Est_Pointe" DESC, "Mecano_Nom" ASC;

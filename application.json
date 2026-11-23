@@ -39,6 +39,10 @@
     {
       "id": "⏱️ Pointages & RH",
       "isDefault": false
+    },
+    {
+      "id": "🔧 Rentabilité Atelier",
+      "isDefault": false
     }
   ],
   "unpublishedApplicationDetail": {

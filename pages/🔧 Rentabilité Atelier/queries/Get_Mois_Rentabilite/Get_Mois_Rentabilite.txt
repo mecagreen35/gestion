@@ -1,0 +1,13 @@
+SELECT 
+    "Periode" AS value,
+    CASE 
+        WHEN "Type_Vue" = 'Mensuel' THEN '📅 Mois : ' || "Periode"
+        WHEN "Type_Vue" = 'Annuel' THEN '📊 Année : ' || "Periode"
+        ELSE '🌍 Historique Global'
+    END AS label,
+    "Type_Vue"
+FROM public.v_rentabilite_mecaniciens_synthese
+GROUP BY "Periode", "Type_Vue"
+ORDER BY 
+    CASE "Type_Vue" WHEN 'Global' THEN 1 WHEN 'Annuel' THEN 2 ELSE 3 END ASC,
+    "Periode" DESC;
