@@ -3,7 +3,7 @@
   "allowScroll": false,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 79,
+  "bottomRow": 75,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "chartData": {
     "t95fj5qxgr": {
@@ -26,7 +26,7 @@
   },
   "chartName": "Sales Report",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ ((chartType) => ( \n  (() => {\n    const rows = Get_Rentabilite_Equipe.data || [];\n    const seriesDef = [\n      { name: \"Facturé Client\", key: \"Equipe_Heures_Client\", color: \"#16a34a\" },\n      { name: \"Location\", key: \"Equipe_Heures_Location\", color: \"#2563eb\" },\n      { name: \"Occasion\", key: \"Equipe_Heures_Occasion\", color: \"#0891b2\" },\n      { name: \"Prépa / Neuf\", key: \"Equipe_Heures_Prepa_Interne\", color: \"#7c3aed\" },\n      { name: \"Garantie Constructeur\", key: \"Equipe_Heures_Garantie\", color: \"#eab308\" },\n      { name: \"Perte Directe\", key: \"Equipe_Heures_Perte\", color: \"#dc2626\" },\n      { name: \"Non Facturé\", key: \"Equipe_Heures_Non_Facturees\", color: \"#9ca3af\" }\n    ];\n    return {\n      tooltip: { trigger: \"axis\", axisPointer: { type: \"shadow\" } },\n      legend: { top: 0 },\n      grid: { left: \"3%\", right: \"3%\", bottom: \"5%\", containLabel: true },\n      xAxis: { type: \"category\", data: rows.map(r => r.Mois) },\n      yAxis: { type: \"value\", name: \"Heures\" },\n      series: seriesDef.map(s => ({\n        name: s.name,\n        type: \"bar\",\n        stack: \"total\",\n        itemStyle: { color: s.color },\n        data: rows.map(r => Number(r[s.key] || 0))\n      }))\n    };\n  })()\n))(Chart1.chartType) }}",
+  "customEChartConfig": "{{ ((chartType) => ( \n  (() => {\n    const rows = Get_Rentabilite_Equipe.data || [];\n    const seriesDef = [\n      { name: \"Facturé Client\", key: \"Equipe_Heures_Client\", color: \"#16a34a\" },\n      { name: \"Location\", key: \"Equipe_Heures_Location\", color: \"#2563eb\" },\n      { name: \"Occasion\", key: \"Equipe_Heures_Occasion\", color: \"#0891b2\" },\n      { name: \"Montage Neuf\", key: \"Equipe_Heures_Montage_Neuf\", color: \"#8b5cf6\" },\n      { name: \"Logistique / Courses\", key: \"Equipe_Heures_Deplacement_Interne\", color: \"#d946ef\" },\n      { name: \"Travaux Atelier\", key: \"Equipe_Heures_Bricolage_Atelier\", color: \"#f97316\" },\n      { name: \"Garantie Constructeur\", key: \"Equipe_Heures_Garantie\", color: \"#eab308\" },\n      { name: \"Perte Directe\", key: \"Equipe_Heures_Perte\", color: \"#dc2626\" },\n      { name: \"Non Facturé\", key: \"Equipe_Heures_Non_Facturees\", color: \"#9ca3af\" }\n    ];\n    return {\n      tooltip: { trigger: \"axis\", axisPointer: { type: \"shadow\" } },\n      legend: { top: 0 },\n      grid: { left: \"3%\", right: \"3%\", bottom: \"5%\", containLabel: true },\n      xAxis: { type: \"category\", data: rows.map(r => r.Mois) },\n      yAxis: { type: \"value\", name: \"Heures\" },\n      series: seriesDef.map(s => ({\n        name: s.name,\n        type: \"bar\",\n        stack: \"total\",\n        itemStyle: { color: s.color },\n        data: rows.map(r => Number(r[s.key] || 0))\n      }))\n    };\n  })()\n))(Chart1.chartType) }}",
   "customFusionChartConfig": {
     "dataSource": {
       "chart": {
@@ -105,8 +105,8 @@
   "mobileRightColumn": 41,
   "mobileTopRow": 41,
   "needsErrorInfo": true,
-  "originalBottomRow": 79,
-  "originalTopRow": 41,
+  "originalBottomRow": 77,
+  "originalTopRow": 39,
   "parentColumnSpace": 11.75,
   "parentId": "kih8mhikro",
   "parentRowSpace": 10,
@@ -114,7 +114,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 64,
   "showDataPointLabel": false,
-  "topRow": 41,
+  "topRow": 37,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "mxom0tay5v",
