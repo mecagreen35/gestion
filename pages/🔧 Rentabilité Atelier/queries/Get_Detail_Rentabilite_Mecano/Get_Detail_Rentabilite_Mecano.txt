@@ -1,0 +1,5 @@
+SELECT *
+FROM public.v_rentabilite_mecaniciens_detail
+WHERE "ID_Employe" = '{{ Table_Rentabilite_Mecanos.selectedRow.ID_Employe }}'
+  AND "Mois" = '{{ Table_Rentabilite_Mecanos.selectedRow.Mois || Table_Rentabilite_Mecanos.selectedRow.Periode }}'
+ORDER BY "Date_Ref" DESC, "Numero_OR" DESC;

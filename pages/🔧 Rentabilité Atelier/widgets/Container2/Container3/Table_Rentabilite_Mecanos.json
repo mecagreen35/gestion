@@ -59,7 +59,7 @@
     "Heures_Deplacement_Interne",
     "Heures_Bricolage_Atelier"
   ],
-  "columnUpdatedAt": 1795482572991,
+  "columnUpdatedAt": 1795864132350,
   "columnWidthMap": {
     "CA_MO_Genere_HT": 156,
     "Heures_Facturees_Client": 192,
@@ -74,7 +74,7 @@
   "customIsLoading": false,
   "customIsLoadingValue": "",
   "defaultPageSize": 0,
-  "defaultSelectedRowIndex": 0,
+  "defaultSelectedRowIndex": "",
   "defaultSelectedRowIndices": [
     0
   ],
@@ -178,9 +178,16 @@
     },
     {
       "key": "primaryColumns.Taux_Productivite_Pct.textColor"
+    },
+    {
+      "key": "onRowSelected"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onRowSelected"
+    }
+  ],
   "enableClientSideSearch": true,
   "endOfData": false,
   "flexVerticalAlignment": "start",
@@ -204,6 +211,7 @@
   "mobileRightColumn": 34,
   "mobileTopRow": 7,
   "needsErrorInfo": false,
+  "onRowSelected": "{{ Get_Detail_Rentabilite_Mecano.run().then(() => showModal('Modal_Detail_Mecano')) }}",
   "originalBottomRow": 37,
   "originalTopRow": 9,
   "parentColumnSpace": 29.9375,
